@@ -1,0 +1,38 @@
+# helmfile.yaml
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+  - name: colearendt
+    url: https://colearendt.github.io/helm
+
+releases:
+  - name: pg
+    namespace: default
+    chart: bitnami/postgresql
+    values:
+      - primary:
+          service:
+            type: NodePort
+            nodePort: 30000
+          persistence:
+            storageClass: "local-path"
+            size: 5Gi
+        auth:
+          postgresPassword: "mysecretpassword"
+
+  - name: postgrest
+    namespace: default
+    chart: colearendt/postgrest
+    version: 0.3.6
+    values:
+      - image:
+          repository: postgrest/postgrest
+          pullPolicy: IfNotPresent
+
+        # http://postgrest.org/en/v4.3/install.html#configuration
+        # https://github.com/colearendt/helm/blob/main/charts/postgrest/values.yaml
+        postgrest:
+          dbUri: "postgres://postgres:mysecretpassword@postgresql:5432/postgres"
+          dbSchema: "public"
+          dbAnonRole: "anon"
+          jwtSecret: "mrt3g309vhfdsvrebgredfwgwf4gff4t5ytg6h5g"

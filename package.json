@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "load": "source config.sh"
+  }
+}
